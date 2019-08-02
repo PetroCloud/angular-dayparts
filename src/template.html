@@ -1,22 +1,19 @@
 <div class="dayparts">
-
     <table border="0" cellspacing="0" cellpadding="0">
         <tr>
             <th></th>
-            <th ng-repeat="hour in hours">
-                <a ng-if="!options.disableColumnSelection" ng-click="selectHour(hour)" ng-show="hour !== 0">{{hour}}</a>
-                <span ng-if="options.disableColumnSelection">{{hour}}</span>
+            <th ng-repeat="row in rows">
+                <a ng-if="!options.disableColumnSelection" ng-click="selectLine(row)">{{row.title}}</a>
             </th>
         </tr>
-        <tr ng-repeat="day in days">
+        <tr ng-repeat="col in columns">
             <th>
-                <a ng-if="!options.disableRowSelection" ng-click="selectDay(day)">{{day.name}}</a>
-                <span ng-if="options.disableRowSelection">{{day.name}}</span>
+                <a ng-if="!options.disableRowSelection" ng-click="selectLine(col)">{{col.title}}</a>
             </th>
-            <td ng-repeat="hour in hours" data-time="{{day.name}}-{{hour}}"></td>
+            <td ng-repeat="row in rows" data-time="{{getDayTitleHourValue(row, col)}}"></td>
         </tr>
     </table>
-
+  
     <button type="button" ng-click="reset()" ng-if="options.reset">Reset</button>
-
-</div>
+  
+  </div>

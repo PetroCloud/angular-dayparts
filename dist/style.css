@@ -1,9 +1,9 @@
 .dayparts {
-    width: 750px;
+    width: 1500px;
 }
 
 .dayparts table {
-    width: 100%;
+    /* width: 100%; */
 }
 
 .dayparts td {
@@ -28,17 +28,18 @@
 }
 
 .dayparts tr:first-child th {
-    text-align: left;
-    text-indent: -4px;
+        width: 70px;
+    text-align: center;
 }
 
 .dayparts tr:not(:first-child) th {
     text-align: right;
     padding-right: 5px;
+    width: 140px;
 }
 
 .dayparts tr td:last-child {
-    border: 0;
+    /* border: 0; */
 }
 
 .dayparts .selected {
