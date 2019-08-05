@@ -3,9 +3,7 @@ angular.module('angular-dayparts', [])
     return {
       restrict: 'E',
       scope: {
-        options: '=?',
-        reverse: '<?',
-        tweleveOClockLabel: '<'
+        options: '=?'
 
       },
       templateUrl: 'template.html',
@@ -41,7 +39,7 @@ angular.module('angular-dayparts', [])
           const hour = parseInt(i, 10);
           let label = `${ hour % 12 === 0 ? '12' : hour % 12 }:${ hour < i ? '30' : '00' } ${i / 12 < 1? 'AM' : 'PM'}`;
 
-          if ($scope.tweleveOClockLabel) {
+          if ($scope.options.tweleveOClockLabel) {
             switch (label) {
               case '12:00 AM':
                 label = '(midnight) ' + label;
@@ -77,7 +75,7 @@ angular.module('angular-dayparts', [])
           return row.type === 'day' ? row.title + '-' + col.data : col.title + '-' + row.data;
         };
 
-        if ($scope.reverse) {
+        if ($scope.options.reverse) {
           $scope.rows = hours.map(mapHour);
           $scope.columns = days.map(mapDay);
         } else {
@@ -324,17 +322,17 @@ try {
 }
 module.run(['$templateCache', function($templateCache) {
   $templateCache.put('template.html',
-    '<div class="dayparts">\n' +
+    '<div class="dayparts" ng-class="{reverse: options.reverse}">\n' +
     '    <table border="0" cellspacing="0" cellpadding="0">\n' +
     '        <tr>\n' +
-    '            <th></th>\n' +
-    '            <th ng-repeat="row in rows">\n' +
-    '                <a ng-if="!options.disableColumnSelection" ng-click="selectLine(row)">{{row.title}}</a>\n' +
+    '            <th id="blank-header"></th>\n' +
+    '            <th ng-repeat="row in rows" ng-click="selectLine(row)">\n' +
+    '                <a ng-if="!options.disableColumnSelection">{{row.title}}</a>\n' +
     '            </th>\n' +
     '        </tr>\n' +
     '        <tr ng-repeat="col in columns">\n' +
-    '            <th>\n' +
-    '                <a ng-if="!options.disableRowSelection" ng-click="selectLine(col)">{{col.title}}</a>\n' +
+    '            <th ng-click="selectLine(col)">\n' +
+    '                <a ng-if="!options.disableRowSelection">{{col.title}}</a>\n' +
     '            </th>\n' +
     '            <td ng-repeat="row in rows" data-time="{{getDayTitleHourValue(row, col)}}"></td>\n' +
     '        </tr>\n' +

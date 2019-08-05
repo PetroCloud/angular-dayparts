@@ -1,14 +1,14 @@
-<div class="dayparts">
+<div class="dayparts" ng-class="{reverse: options.reverse}">
     <table border="0" cellspacing="0" cellpadding="0">
         <tr>
-            <th></th>
-            <th ng-repeat="row in rows">
-                <a ng-if="!options.disableColumnSelection" ng-click="selectLine(row)">{{row.title}}</a>
+            <th id="blank-header"></th>
+            <th ng-repeat="row in rows" ng-click="selectLine(row)">
+                <a ng-if="!options.disableColumnSelection">{{row.title}}</a>
             </th>
         </tr>
         <tr ng-repeat="col in columns">
-            <th>
-                <a ng-if="!options.disableRowSelection" ng-click="selectLine(col)">{{col.title}}</a>
+            <th ng-click="selectLine(col)">
+                <a ng-if="!options.disableRowSelection">{{col.title}}</a>
             </th>
             <td ng-repeat="row in rows" data-time="{{getDayTitleHourValue(row, col)}}"></td>
         </tr>

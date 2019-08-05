@@ -2,8 +2,25 @@
     width: 1500px;
 }
 
+.dayparts.reverse {
+    margin-top: 40px;
+}
+
 .dayparts table {
-    /* width: 100%; */
+    table-layout: fixed;
+}
+
+.dayparts.reverse table {
+    width: 100%;
+}
+
+.dayparts #blank-header {
+    width: 80px;
+    padding: 28px 0 0;
+}
+.dayparts.reverse #blank-header {
+    transform: none;
+    top: 0;
 }
 
 .dayparts td {
@@ -17,6 +34,13 @@
     font-weight: normal;
 }
 
+.dayparts.reverse tr:first-child th {
+    transform: rotate(-90.0deg);
+    height: 0px;
+    width: 30px;
+    white-space: nowrap;
+}
+
 .dayparts td, .dayparts th {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -28,7 +52,7 @@
 }
 
 .dayparts tr:first-child th {
-        width: 70px;
+    width: 70px;
     text-align: center;
 }
 
@@ -54,7 +78,7 @@
     margin-right: 25px;
 }
 
-.dayparts a {
+.dayparts th {
     cursor: pointer;
 }
 .dayparts a:hover {

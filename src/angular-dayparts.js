@@ -3,9 +3,7 @@ angular.module('angular-dayparts', [])
     return {
       restrict: 'E',
       scope: {
-        options: '=?',
-        reverse: '<?',
-        tweleveOClockLabel: '<'
+        options: '=?'
 
       },
       templateUrl: 'template.html',
@@ -41,7 +39,7 @@ angular.module('angular-dayparts', [])
           const hour = parseInt(i, 10);
           let label = `${ hour % 12 === 0 ? '12' : hour % 12 }:${ hour < i ? '30' : '00' } ${i / 12 < 1? 'AM' : 'PM'}`;
 
-          if ($scope.tweleveOClockLabel) {
+          if ($scope.options.tweleveOClockLabel) {
             switch (label) {
               case '12:00 AM':
                 label = '(midnight) ' + label;
@@ -77,7 +75,7 @@ angular.module('angular-dayparts', [])
           return row.type === 'day' ? row.title + '-' + col.data : col.title + '-' + row.data;
         };
 
-        if ($scope.reverse) {
+        if ($scope.options.reverse) {
           $scope.rows = hours.map(mapHour);
           $scope.columns = days.map(mapDay);
         } else {

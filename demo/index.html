@@ -14,12 +14,14 @@
             onChange: function(selected) {
                 console.log('selected', selected);
             },
-            selected: ["tuesday-1.5", "tuesday-2", "tuesday-2.5", "tuesday-3", "tuesday-3.5", "tuesday-5", "tuesday-5.5", "tuesday-6", "tuesday-6.5", "tuesday-7", "tuesday-8.5", "tuesday-9", "tuesday-9.5", "tuesday-10", "tuesday-10.5", "tuesday-12", "tuesday-12.5", "tuesday-14.5", "tuesday-15", "tuesday-15.5", "tuesday-16", "tuesday-16.5", "wednesday-1.5", "wednesday-3.5", "wednesday-5", "wednesday-9.5", "wednesday-12", "wednesday-13", "wednesday-14.5", "wednesday-16.5", "thursday-1.5", "thursday-2", "thursday-2.5", "thursday-3", "thursday-3.5", "thursday-5", "thursday-5.5", "thursday-6", "thursday-6.5", "thursday-9.5", "thursday-12", "thursday-12.5", "thursday-14.5", "thursday-16.5", "friday-1.5", "friday-5", "friday-9.5", "friday-12", "friday-13", "friday-14.5", "friday-16.5", "saturday-1.5", "saturday-5", "saturday-5.5", "saturday-6", "saturday-6.5", "saturday-7", "saturday-9.5", "saturday-12", "saturday-13", "saturday-14.5", "saturday-15", "saturday-15.5", "saturday-16", "saturday-16.5"]
+            selected: ["tuesday-1.5", "tuesday-2", "tuesday-2.5", "tuesday-3", "tuesday-3.5", "tuesday-5", "tuesday-5.5", "tuesday-6", "tuesday-6.5", "tuesday-7", "tuesday-8.5", "tuesday-9", "tuesday-9.5", "tuesday-10", "tuesday-10.5", "tuesday-12", "tuesday-12.5", "tuesday-14.5", "tuesday-15", "tuesday-15.5", "tuesday-16", "tuesday-16.5", "wednesday-1.5", "wednesday-3.5", "wednesday-5", "wednesday-9.5", "wednesday-12", "wednesday-13", "wednesday-14.5", "wednesday-16.5", "thursday-1.5", "thursday-2", "thursday-2.5", "thursday-3", "thursday-3.5", "thursday-5", "thursday-5.5", "thursday-6", "thursday-6.5", "thursday-9.5", "thursday-12", "thursday-12.5", "thursday-14.5", "thursday-16.5", "friday-1.5", "friday-5", "friday-9.5", "friday-12", "friday-13", "friday-14.5", "friday-16.5", "saturday-1.5", "saturday-5", "saturday-5.5", "saturday-6", "saturday-6.5", "saturday-7", "saturday-9.5", "saturday-12", "saturday-13", "saturday-14.5", "saturday-15", "saturday-15.5", "saturday-16", "saturday-16.5"],
+            reverse: true,
+            tweleveOClockLabel: false
         };
     });
     </script>
 </head>
 <body ng-app="app" ng-controller="main">
-    <angular-dayparts options="options" reverse="true" tweleve-o-clock-label="false"></angular-dayparts>
+    <angular-dayparts options="options"></angular-dayparts>
 </body>
 </html>
