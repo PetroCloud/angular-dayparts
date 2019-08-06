@@ -302,7 +302,7 @@ angular.module('angular-dayparts', []).directive('angularDayparts', ['$window', 
 
       function _addCell(el) {
         el.addClass(klass);
-        selected.push(el.data('time'));
+        selected = _.union(selected, [el.data('time')])
       }
 
       function wrap(fn) {
