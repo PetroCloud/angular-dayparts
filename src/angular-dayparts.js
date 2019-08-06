@@ -1,316 +1,326 @@
-angular.module('angular-dayparts', [])
-  .directive('angularDayparts', ['$window', '$document', '$timeout', function($window, $document, $timeout) {
-    return {
-      restrict: 'E',
-      scope: {
-        options: '=?'
+"use strict";
 
-      },
-      templateUrl: 'template.html',
-      controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
+angular.module('angular-dayparts', []).directive('angularDayparts', ['$window', '$document', '$timeout', function ($window, $document, $timeout) {
+  return {
+    restrict: 'E',
+    scope: {
+      options: '=?'
+    },
+    templateUrl: 'template.html',
+    controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+      $scope.options = $scope.options || {};
+      $scope.options.reset = $scope.options.reset === undefined ? true : $scope.options.reset;
+      var days = [{
+        name: 'monday',
+        position: 1
+      }, {
+        name: 'tuesday',
+        position: 2
+      }, {
+        name: 'wednesday',
+        position: 3
+      }, {
+        name: 'thursday',
+        position: 4
+      }, {
+        name: 'friday',
+        position: 5
+      }, {
+        name: 'saturday',
+        position: 6
+      }, {
+        name: 'sunday',
+        position: 7
+      }];
+      var hours = [];
 
-        $scope.options = $scope.options || {};
-        $scope.options.reset = ($scope.options.reset === undefined) ? true : $scope.options.reset;
+      for (var i = 0; i < 24; i = i + .5) {
+        var hour = parseInt(i, 10);
+        var label = "".concat(hour % 12 === 0 ? '12' : hour % 12, ":").concat(hour < i ? '30' : '00', " ").concat(i / 12 < 1 ? 'AM' : 'PM');
 
-        const days = [{
-          name: 'monday',
-          position: 1
-        }, {
-          name: 'tuesday',
-          position: 2
-        }, {
-          name: 'wednesday',
-          position: 3
-        }, {
-          name: 'thursday',
-          position: 4
-        }, {
-          name: 'friday',
-          position: 5
-        }, {
-          name: 'saturday',
-          position: 6
-        }, {
-          name: 'sunday',
-          position: 7
-        }];
-        const hours = [];
-        for (let i = 0; i < 24; i = i + .5) {
-          const hour = parseInt(i, 10);
-          let label = `${ hour % 12 === 0 ? '12' : hour % 12 }:${ hour < i ? '30' : '00' } ${i / 12 < 1? 'AM' : 'PM'}`;
+        if ($scope.options.tweleveOClockLabel) {
+          switch (label) {
+            case '12:00 AM':
+              label = '(midnight) ' + label;
+              break;
 
-          if ($scope.options.tweleveOClockLabel) {
-            switch (label) {
-              case '12:00 AM':
-                label = '(midnight) ' + label;
-                break;
-              case '12:00 PM':
-                label = '(noon) ' + label
-                break;
-            }
+            case '12:00 PM':
+              label = '(noon) ' + label;
+              break;
           }
-
-          hours.push({
-            value: i,
-            label: label,
-          });
         }
 
-        const mapDay = function(day) {
-          return {
-            title: day.name,
-            data: day.position,
-            type: 'day'
-          }
+        hours.push({
+          value: i,
+          label: label
+        });
+      }
+
+      var mapDay = function mapDay(day) {
+        return {
+          title: day.name,
+          data: day.position,
+          type: 'day'
         };
-        const mapHour = function(hour) {
-          return {
-            title: hour.label,
-            data: hour.value,
-            type: 'hour'
-          }
+      };
+
+      var mapHour = function mapHour(hour) {
+        return {
+          title: hour.label,
+          data: hour.value,
+          type: 'hour'
         };
+      };
 
-        $scope.getDayTitleHourValue = function(row, col) {
-          return row.type === 'day' ? row.title + '-' + col.data : col.title + '-' + row.data;
-        };
+      $scope.getDayTitleHourValue = function (row, col) {
+        return row.type === 'day' ? row.title + '-' + col.data : col.title + '-' + row.data;
+      };
 
-        if ($scope.options.reverse) {
-          $scope.rows = hours.map(mapHour);
-          $scope.columns = days.map(mapDay);
-        } else {
-          $scope.rows = days.map(mapDay);
-          $scope.columns = hours.map(mapHour);
+      if ($scope.options.reverse) {
+        $scope.rows = hours.map(mapHour);
+        $scope.columns = days.map(mapDay);
+      } else {
+        $scope.rows = days.map(mapDay);
+        $scope.columns = hours.map(mapHour);
+      }
+
+      var klass = 'selected';
+      var startCell = null;
+      var isDragging = false;
+      var selected = [];
+      var isStartSelected = false;
+
+      if ($scope.options.selected) {
+        $timeout(function () {
+          repopulate($scope.options.selected);
+        }, 100);
+      }
+      /**
+       * When user stop clicking make the callback with selected elements
+       */
+
+
+      function mouseUp() {
+        if (!isDragging) {
+          return;
         }
 
-        var klass = 'selected';
-        var startCell = null;
-        var isDragging = false;
-        var selected = [];
-        var isStartSelected = false;
-
-        if ($scope.options.selected) {
-          $timeout(function() {
-            repopulate($scope.options.selected);
-          }, 100);
-        }
-
-        /**
-         * When user stop clicking make the callback with selected elements
-         */
-        function mouseUp() {
-          if (!isDragging) {
-            return;
-          }
-          isDragging = false;
-          onChangeCallback();
-        }
+        isDragging = false;
+        onChangeCallback();
+      }
+      /**
+       * Call 'onChange' function from passed options
+       */
 
 
-        /**
-         * Call 'onChange' function from passed options
-         */
-        function onChangeCallback() {
-          if ($scope.options && $scope.options.onChange) {
-
-            // Sort by day name and time
-            var sortedSelected = [];
-            selected.forEach(function(item) {
-              var el = item.split('-');
-              var o = {
-                day: _.find(days, {
-                  name: el[0]
-                }),
-                time: parseFloat(el[1])
-              };
-              sortedSelected.push(o);
-            });
-
-            sortedSelected = _.sortBy(_.sortBy(sortedSelected, function(item) {
-              return item.time;
-            }), function(item) {
-              return item.day.position;
-            });
-
-            selected = sortedSelected.map(function(item) {
-              return item.day.name + '-' + item.time;
-            })
-
-            $scope.options.onChange(selected);
-          }
-        }
-
-        /**
-         * User start to click
-         * @param {jQuery DOM element}
-         */
-        function mouseDown(el) {
-          isDragging = true;
-          setStartCell(el);
-          setEndCell(el);
-        }
-
-        /**
-         * User enter in a cell still triggering click
-         * @param {jQuery DOM element}
-         */
-        function mouseEnter(el) {
-          if (!isDragging) {
-            return;
-          }
-          setEndCell(el);
-        }
-
-        /**
-         * Get the first cell clicked
-         * @param {jQuery DOM element}
-         */
-        function setStartCell(el) {
-          startCell = el;
-          isStartSelected = _.contains(selected, el.data('time'));
-        }
-
-        /**
-         * Get the last cell
-         * @param {jQuery DOM element}
-         */
-        function setEndCell(el) {
-          cellsBetween(startCell, el).each(function() {
-            var el = angular.element(this);
-
-            if (!isStartSelected) {
-              if (!_.contains(selected, el.data('time'))) {
-                _addCell($(el));
-              }
-            } else {
-              _removeCell(el);
-            }
+      function onChangeCallback() {
+        if ($scope.options && $scope.options.onChange) {
+          // Sort by day name and time
+          var sortedSelected = [];
+          selected.forEach(function (item) {
+            var el = item.split('-');
+            var o = {
+              day: _.find(days, {
+                name: el[0]
+              }),
+              time: parseFloat(el[1])
+            };
+            sortedSelected.push(o);
           });
-        }
-
-        /**
-         * Get all the cells between first and last
-         * @param  {jQuery DOM element} start cell
-         * @param  {jQuery DOM element} end cell
-         * @return {jQuery DOM elements} cells between start and end
-         */
-        function cellsBetween(start, end) {
-          var coordsStart = getCoords(start);
-          var coordsEnd = getCoords(end);
-          var topLeft = {
-            column: $window.Math.min(coordsStart.column, coordsEnd.column),
-            row: $window.Math.min(coordsStart.row, coordsEnd.row),
-          };
-          var bottomRight = {
-            column: $window.Math.max(coordsStart.column, coordsEnd.column),
-            row: $window.Math.max(coordsStart.row, coordsEnd.row),
-          };
-          return $element.find('td').filter(function() {
-            var el = angular.element(this);
-            var coords = getCoords(el);
-            return coords.column >= topLeft.column &&
-              coords.column <= bottomRight.column &&
-              coords.row >= topLeft.row &&
-              coords.row <= bottomRight.row;
+          sortedSelected = _.sortBy(_.sortBy(sortedSelected, function (item) {
+            return item.time;
+          }), function (item) {
+            return item.day.position;
           });
-        }
-
-        /**
-         * Get the coordinates of a given cell
-         * @param  {jQuery DOM element}
-         * @return {object}
-         */
-        function getCoords(cell) {
-          var row = cell.parents('row');
-          return {
-            column: cell[0].cellIndex,
-            row: cell.parent()[0].rowIndex
-          };
-        }
-
-        /**
-         * Passing 'selected' property will make repopulate table
-         */
-        function repopulate() {
-          selected = _.clone($scope.options.selected);
-          $element.find('td').each(function(i, el) {
-            if (_.contains(selected, $(el).data('time'))) {
-              $(el).addClass(klass);
-            }
+          selected = sortedSelected.map(function (item) {
+            return item.day.name + '-' + item.time;
           });
+          $scope.options.onChange(selected);
+        }
+      }
+      /**
+       * User start to click
+       * @param {jQuery DOM element}
+       */
+
+
+      function mouseDown(el) {
+        isDragging = true;
+        setStartCell(el);
+        setEndCell(el);
+      }
+      /**
+       * User enter in a cell still triggering click
+       * @param {jQuery DOM element}
+       */
+
+
+      function mouseEnter(el) {
+        if (!isDragging) {
+          return;
         }
 
-        $scope.selectLine = function(colOrRow) {
-          let searchSymbol;
-          let correctAttr;
-          if (colOrRow.type === 'day') {
-            searchSymbol = '^="';
-            correctAttr = 'title';
-          } else {
-            searchSymbol = '$="-';
-            correctAttr = 'data';
-          }
+        setEndCell(el);
+      }
+      /**
+       * Get the first cell clicked
+       * @param {jQuery DOM element}
+       */
 
-          const wholeLine = $element.find('.dayparts td[data-time' + searchSymbol + colOrRow[correctAttr] + '"]');
-          const selectedOfLine = wholeLine.filter('.selected');
 
-          if (wholeLine.length === selectedOfLine.length) {
-            wholeLine.each(function(i, el) {
-              _removeCell($(el));
-            });
-          } else {
-            wholeLine.each(function(i, el) {
+      function setStartCell(el) {
+        startCell = el;
+        isStartSelected = _.contains(selected, el.data('time'));
+      }
+      /**
+       * Get the last cell
+       * @param {jQuery DOM element}
+       */
+
+
+      function setEndCell(el) {
+        cellsBetween(startCell, el).each(function () {
+          var el = angular.element(this);
+
+          if (!isStartSelected) {
+            if (!_.contains(selected, el.data('time'))) {
               _addCell($(el));
-            });
+            }
+          } else {
+            _removeCell(el);
           }
-          onChangeCallback();
-        }
+        });
+      }
+      /**
+       * Get all the cells between first and last
+       * @param  {jQuery DOM element} start cell
+       * @param  {jQuery DOM element} end cell
+       * @return {jQuery DOM elements} cells between start and end
+       */
 
-        /**
-         * Remove all selected hours
-         */
-        $scope.reset = function() {
-          selected = [];
-          $element.find('td').each(function(i, el) {
-            $(el).removeClass(klass);
-          });
-          onChangeCallback();
+
+      function cellsBetween(start, end) {
+        var coordsStart = getCoords(start);
+        var coordsEnd = getCoords(end);
+        var topLeft = {
+          column: $window.Math.min(coordsStart.column, coordsEnd.column),
+          row: $window.Math.min(coordsStart.row, coordsEnd.row)
         };
+        var bottomRight = {
+          column: $window.Math.max(coordsStart.column, coordsEnd.column),
+          row: $window.Math.max(coordsStart.row, coordsEnd.row)
+        };
+        return $element.find('td').filter(function () {
+          var el = angular.element(this);
+          var coords = getCoords(el);
+          return coords.column >= topLeft.column && coords.column <= bottomRight.column && coords.row >= topLeft.row && coords.row <= bottomRight.row;
+        });
+      }
+      /**
+       * Get the coordinates of a given cell
+       * @param  {jQuery DOM element}
+       * @return {object}
+       */
 
-        /**
-         * Remove css class from table and element from selected array
-         * @param  {jQuery DOM element} cell
-         */
-        function _removeCell(el) {
-          el.removeClass(klass);
-          selected = _.without(selected, el.data('time'));
-        }
 
-        // TODO: make add unique
-        /** 
-         * Add css class to table and element to selected array
-         * @param  {jQuery DOM element} cell
-         */
-        function _addCell(el) {
-          el.addClass(klass);
-          selected.push(el.data('time'));
-        }
+      function getCoords(cell) {
+        var row = cell.parents('row');
+        return {
+          column: cell[0].cellIndex,
+          row: cell.parent()[0].rowIndex
+        };
+      }
+      /**
+       * Passing 'selected' property will make repopulate table
+       */
 
-        function wrap(fn) {
-          return function() {
-            var el = angular.element(this);
-            $scope.$apply(function() {
-              fn(el);
-            });
+
+      function repopulate() {
+        selected = _.clone($scope.options.selected);
+        $element.find('td').each(function (i, el) {
+          if (_.contains(selected, $(el).data('time'))) {
+            $(el).addClass(klass);
           }
+        });
+      }
+
+      $scope.selectLine = function (colOrRow) {
+        var searchSymbol;
+        var correctAttr;
+
+        if (colOrRow.type === 'day') {
+          searchSymbol = '^="';
+          correctAttr = 'title';
+        } else {
+          searchSymbol = '$="-';
+          correctAttr = 'data';
         }
 
-        /**
-         * Mouse events
-         */
-        $element.delegate('.dayparts td', 'mousedown', wrap(mouseDown));
-        $element.delegate('.dayparts td', 'mouseenter', wrap(mouseEnter));
-        $document.delegate('body', 'mouseup', wrap(mouseUp));
-      }]
-    }
-  }]);
+        var wholeLine = $element.find('.dayparts td[data-time' + searchSymbol + colOrRow[correctAttr] + '"]');
+        var selectedOfLine = wholeLine.filter('.selected');
+
+        if (wholeLine.length === selectedOfLine.length) {
+          wholeLine.each(function (i, el) {
+            _removeCell($(el));
+          });
+        } else {
+          wholeLine.each(function (i, el) {
+            _addCell($(el));
+          });
+        }
+
+        onChangeCallback();
+      };
+      /**
+       * Remove all selected hours
+       */
+
+
+      $scope.reset = function () {
+        selected = [];
+        $element.find('td').each(function (i, el) {
+          $(el).removeClass(klass);
+        });
+        onChangeCallback();
+      };
+      /**
+       * Remove css class from table and element from selected array
+       * @param  {jQuery DOM element} cell
+       */
+
+
+      function _removeCell(el) {
+        el.removeClass(klass);
+        selected = _.without(selected, el.data('time'));
+      } // TODO: make add unique
+
+      /** 
+       * Add css class to table and element to selected array
+       * @param  {jQuery DOM element} cell
+       */
+
+
+      function _addCell(el) {
+        el.addClass(klass);
+        selected.push(el.data('time'));
+      }
+
+      function wrap(fn) {
+        return function () {
+          var el = angular.element(this);
+          $scope.$apply(function () {
+            fn(el);
+          });
+        };
+      }
+      /**
+       * Mouse events
+       */
+
+
+      $element.delegate('.dayparts td', 'mousedown', wrap(mouseDown));
+      $element.delegate('.dayparts td', 'mouseenter', wrap(mouseEnter));
+      $document.delegate('body', 'mouseup', wrap(mouseUp));
+    }]
+  };
+}]);
