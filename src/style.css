@@ -80,6 +80,7 @@
 
 .dayparts th {
     cursor: pointer;
+    text-transform: capitalize;
 }
 .dayparts a:hover {
     color: #333333;
