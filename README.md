@@ -45,7 +45,7 @@ $scope.options = {
     reverse: true, // default false
 
     // adds "midnight" and "noon" labels to 12:00 am and 12:00 pm times.
-    tweleveOClockLabel: true // default false
+    twelveOClockLabel: true // default false
 };
 ```
 

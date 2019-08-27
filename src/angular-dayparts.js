@@ -38,7 +38,7 @@ angular.module('angular-dayparts', []).directive('angularDayparts', ['$window', 
         var hour = parseInt(i, 10);
         var label = "".concat(hour % 12 === 0 ? '12' : hour % 12, ":").concat(hour < i ? '30' : '00', " ").concat(i / 12 < 1 ? 'AM' : 'PM');
 
-        if ($scope.options.tweleveOClockLabel) {
+        if ($scope.options.twelveOClockLabel) {
           switch (label) {
             case '12:00 AM':
               label = '(midnight) ' + label;
