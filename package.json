@@ -4,7 +4,7 @@
   "description": "Angular directive for select hours in a week",
   "main": "dist/angular-dayparts.js",
   "dependencies": {
-    "angular": ">=1.6.5",
+    "angular": ">=1.2.0",
     "jquery": ">= 1.9.0",
     "underscore": ">=1.8.0"
   },
