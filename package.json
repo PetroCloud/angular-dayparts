@@ -1,5 +1,5 @@
 {
-  "name": "angular-dayparts",
+  "name": "@petrocloud/angular-dayparts",
   "version": "0.2.9",
   "description": "Angular directive for select hours in a week",
   "main": "dist/angular-dayparts.js",
@@ -21,12 +21,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cichys/angular-dayparts.git"
+    "url": "https://github.com/petrocloud/angular-dayparts.git"
   },
-  "author": "https://github.com/cichys",
+  "author": "https://github.com/petrocloud",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cichys/angular-dayparts/issues"
+    "url": "https://github.com/petrocloud/angular-dayparts/issues"
   },
-  "homepage": "https://github.com/cichys/angular-dayparts"
+  "homepage": "https://github.com/petrocloud/angular-dayparts"
 }
