@@ -22,6 +22,7 @@
     </script>
 </head>
 <body ng-app="app" ng-controller="main">
-    <angular-dayparts options="options"></angular-dayparts>
+    <button ng-click="reload()">Reload angular day parts</button>
+    <angular-dayparts options="options" reload="reload"></angular-dayparts>
 </body>
 </html>

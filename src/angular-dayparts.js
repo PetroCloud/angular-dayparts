@@ -4,10 +4,12 @@ angular.module('angular-dayparts', []).directive('angularDayparts', ['$window', 
   return {
     restrict: 'E',
     scope: {
-      options: '=?'
+      options: '=?',
+      reload: '=?'
     },
     templateUrl: 'template.html',
     controller: ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
+      
       $scope.options = $scope.options || {};
       $scope.options.reset = $scope.options.reset === undefined ? true : $scope.options.reset;
       var days = [{
@@ -90,11 +92,16 @@ angular.module('angular-dayparts', []).directive('angularDayparts', ['$window', 
       var selected = [];
       var isStartSelected = false;
 
-      if ($scope.options.selected) {
-        $timeout(function () {
-          repopulate($scope.options.selected);
-        }, 100);
+      $scope.reload = function () {
+        clearElements();
+        if ($scope.options.selected) {
+          $timeout(function () {
+            repopulate($scope.options.selected);
+            onChangeCallback();
+          }, 100);
+        }
       }
+      $scope.reload(); // initial call
       /**
        * When user stop clicking make the callback with selected elements
        */
@@ -276,13 +283,17 @@ angular.module('angular-dayparts', []).directive('angularDayparts', ['$window', 
        */
 
 
-      $scope.reset = function () {
+      function reset() {
+        clearElements();
+        onChangeCallback();
+      };
+
+      function clearElements() {
         selected = [];
         $element.find('td').each(function (i, el) {
           $(el).removeClass(klass);
         });
-        onChangeCallback();
-      };
+      }
       /**
        * Remove css class from table and element from selected array
        * @param  {jQuery DOM element} cell
