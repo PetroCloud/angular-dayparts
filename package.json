@@ -1,6 +1,6 @@
 {
   "name": "@petrocloud/angular-dayparts",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Angular directive for select hours in a week",
   "main": "dist/angular-dayparts.js",
   "dependencies": {
