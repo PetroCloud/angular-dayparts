@@ -177,7 +177,7 @@ angular.module('angular-dayparts', []).directive('angularDayparts', ['$window', 
 
       function setStartCell(el) {
         startCell = el;
-        isStartSelected = _.contains(selected, el.data('time'));
+        isStartSelected = _.includes(selected, el.data('time'));
       }
       /**
        * Get the last cell
@@ -190,7 +190,7 @@ angular.module('angular-dayparts', []).directive('angularDayparts', ['$window', 
           var el = angular.element(this);
 
           if (!isStartSelected) {
-            if (!_.contains(selected, el.data('time'))) {
+            if (!_.includes(selected, el.data('time'))) {
               _addCell($(el));
             }
           } else {
@@ -245,7 +245,7 @@ angular.module('angular-dayparts', []).directive('angularDayparts', ['$window', 
       function repopulate() {
         selected = _.clone($scope.options.selected);
         $element.find('td').each(function (i, el) {
-          if (_.contains(selected, $(el).data('time'))) {
+          if (_.includes(selected, $(el).data('time'))) {
             $(el).addClass(klass);
           }
         });
@@ -305,7 +305,7 @@ angular.module('angular-dayparts', []).directive('angularDayparts', ['$window', 
         selected = _.without(selected, el.data('time'));
       } // TODO: make add unique
 
-      /** 
+      /**
        * Add css class to table and element to selected array
        * @param  {jQuery DOM element} cell
        */
